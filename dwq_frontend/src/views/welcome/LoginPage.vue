@@ -1,17 +1,15 @@
 <script setup>
 import {User, Lock} from '@element-plus/icons-vue'
 import router from "@/router";
+import { useRoute } from 'vue-router';
 import {reactive, ref} from "vue";
 import {login} from "@/net/index.js";
-
-
 const formRef = ref()
 const form = reactive({
   username: '',
   password: '',
   remember: false
 })
-
 const rules = { //判断是否输入
   username: [
     { required: true, message: '请输入用户名' }
@@ -20,7 +18,6 @@ const rules = { //判断是否输入
     { required: true, message: '请输入密码'}
   ]
 }
-
 function userLogin() {//登录
   formRef.value.validate((isValid) => {
     if(isValid) {
@@ -28,6 +25,11 @@ function userLogin() {//登录
     }
   });
 }
+
+if(useRoute().query.message){
+  alert(useRoute().query.message)
+}
+
 </script>
 
 <template>
@@ -77,6 +79,7 @@ function userLogin() {//登录
     <div>
       <el-button style="width: 270px" @click="router.push('/register')" type="warning" plain>注册账号</el-button>
     </div>
+    <el-button style="width: 270px" @click="router.push('/pet')" type="warning" plain>宠物提交</el-button>
   </div>
 </template>
 

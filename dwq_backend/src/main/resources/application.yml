@@ -1,3 +1,4 @@
+
 spring:
   mail:
     host: smtp.qq.com # SMTP服务器地址
@@ -31,10 +32,12 @@ spring:
       # 连接超时时间（毫秒）
       timeout: 5000
   datasource:
-    url: jdbc:mysql://localhost:3306/dwq_db
-    username: root
-    password: 2713613951
-    driver-class-name: com.mysql.cj.jdbc.Driver
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://116.62.32.192:3306/dwq?serverTime=UTC
+      username: root
+      password: 123456dwq
+      hikari:
+        maximumPoolSize: 20
   security:
     jwt:
       key: 'abcdefghijklmn'
@@ -56,3 +59,5 @@ spring:
       origin: '*'
       credentials: false
       methods: '*'
+server:
+  port: 8080
