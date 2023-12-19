@@ -99,5 +99,4 @@ function get(url, success, failure = defaultFailure) {//用户使用的get请求
 function unauthorized() {//未验证的
     return !takeAccessToken()
 }
-
 export { post, get, login, logout, unauthorized }
