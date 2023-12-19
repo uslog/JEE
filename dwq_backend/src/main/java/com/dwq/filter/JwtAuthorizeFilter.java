@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -17,27 +18,25 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class JwtAuthorizeFilter extends OncePerRequestFilter {//Jwt请求头校验 过滤器
-
+public class JwtAuthorizeFilter extends OncePerRequestFilter {
     @Resource
     JwtUtils utils;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String authorization=request.getHeader("Authorization");
-        DecodedJWT jwt =utils.resolveJwt(authorization);
+        DecodedJWT jwt= utils.resolveJwt(authorization);
         if(jwt!=null){
             UserDetails user=utils.toUser(jwt);
             UsernamePasswordAuthenticationToken authentication=
                     new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            request.setAttribute("id",utils.toId(jwt)); // 可从此处取信息
+
+            request.setAttribute("id",utils.toId(jwt));
 
         }
         filterChain.doFilter(request,response);
-
     }
 }

@@ -26,40 +26,42 @@ public class JwtUtils {
     String key;
     @Value("${spring.security.jwt.expire}")
     int expire;
-
-
     @Resource
     StringRedisTemplate template;
+
+
     public boolean invalidateJwt(String headerToken){
         String token = this.convertToken(headerToken);
+        if (token == null) return false;
         Algorithm algorithm = Algorithm.HMAC256(key);
         JWTVerifier jwtVerifier = JWT.require(algorithm).build();
-        try {
-            DecodedJWT verify = jwtVerifier.verify(token);
-            return deleteToken(verify.getId(), verify.getExpiresAt());
-        } catch (JWTVerificationException e) {
+        try{
+            DecodedJWT jwt=jwtVerifier.verify(token);
+            String id = jwt.getId();
+            return deleteToken(id,jwt.getExpiresAt());
+        }catch (JWTVerificationException e){
             return false;
         }
-    }
 
-    private boolean deleteToken(String uuid, Date time){
-        if(this.isInvalidToken(uuid))
-            return false;
-        Date now = new Date();
-        long expire = Math.max(time.getTime() - now.getTime(), 0);
-        template.opsForValue().set(Const.JWT_BLACK_LIST + uuid, "", expire, TimeUnit.MILLISECONDS);
+
+    }
+    private boolean deleteToken(String uuid,Date time){
+        if(this.isInvalidToken(uuid)) return false;
+        Date now=new Date();
+        long expire= Math.max(time.getTime()- now.getTime(),0);
+        template.opsForValue().set(Const.JWT_BLACK_LIST+uuid,"",expire, TimeUnit.MILLISECONDS);
+
         return true;
     }
-
     private boolean isInvalidToken(String uuid){
-       return Boolean.TRUE.equals(template.hasKey(Const.JWT_BLACK_LIST+uuid));
+        return Boolean.TRUE.equals(template.hasKey(Const.JWT_BLACK_LIST+uuid));
     }
-
     public DecodedJWT resolveJwt(String headerToken) {
         String token = this.convertToken(headerToken);
         if (token == null) return null;
         Algorithm algorithm = Algorithm.HMAC256(key);
         JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+
         try {
             DecodedJWT verify = jwtVerifier.verify(token);      //检查jwt是否被篡改
             if(this.isInvalidToken(verify.getId()))
@@ -70,12 +72,11 @@ public class JwtUtils {
             return null;
         }
     }
-
     public String createJwt(UserDetails details, int id, String username) {
         Algorithm algorithm = Algorithm.HMAC256(key); //加密算法
         Date expire = this.expireTime();
         return JWT.create()
-                /*.withJWTId(UUID.randomUUID().toString())*/
+                .withJWTId(UUID.randomUUID().toString())
                 .withClaim("id", id) //用户id
                 .withClaim("name", username) //用户名
                 .withClaim("authorities", details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList()) //权限
@@ -90,6 +91,7 @@ public class JwtUtils {
         calendar.add(Calendar.HOUR, expire * 24);
         return calendar.getTime();
     }
+
 
     public UserDetails toUser(DecodedJWT jwt) {  //解析用户信息  转换成UserDetails格式
         Map<String, Claim> claims = jwt.getClaims();
