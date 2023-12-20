@@ -10,10 +10,10 @@ public interface PetMapper {
     int insertPet(Pet pet);
 
     @Delete("DELETE FROM dwq_pet WHERE id = #{id}")
-    void deletePetById(Integer id);
+    int deletePetById(Integer id);
 
     @Update("UPDATE dwq_pet SET name=#{name}, gender=#{gender}, age=#{age}, species=#{species}, avatar=#{avatar}, temperament=#{temperament}, price=#{price} WHERE id = #{id}")
-    void updatePet(Pet pet);
+    int updatePet(Pet pet);
 
     @Select("SELECT * FROM dwq_pet WHERE id = #{id}")
     Pet selectPetById(Integer id);

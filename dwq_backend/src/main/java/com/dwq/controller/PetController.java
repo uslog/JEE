@@ -24,35 +24,41 @@ public class PetController {
     @PostMapping
     @Operation(summary = "添加宠物操作")
     public RestBean<Void> addPet(@ModelAttribute Pet pet) {
-       if(petService.addPet(pet))
-       return RestBean.success();
-       else
-       return RestBean.failure(401,"添加宠物失败");
+        if(petService.addPet(pet))
+            return RestBean.success();
+        else
+            return RestBean.failure(409,"添加宠物信息失败");
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除宠物操作")
-    public void deletePet(@PathVariable Integer id) {
-        petService.deletePet(id);
+    public RestBean<Void> deletePet(@PathVariable Integer id) {
+        if(petService.deletePet(id))
+            return RestBean.success();
+        else
+            return RestBean.failure(409,"删除宠物信息失败");
     }
 
     @PutMapping
     @Operation(summary = "修改宠物操作")
-    public void updatePet(@ModelAttribute Pet pet) {
-        petService.updatePet(pet);
+    public RestBean<Void> updatePet(@ModelAttribute Pet pet) {
+        if(petService.updatePet(pet))
+            return RestBean.success();
+        else
+            return RestBean.failure(409,"修改宠物信息失败");
     }
 
 
     @GetMapping("/{id}")
     @Operation(summary = "获取单个宠物")
-    public Pet getPet(@PathVariable Integer id) {
-        return petService.getPet(id);
+    public RestBean<Pet> getPet(@PathVariable Integer id) {
+       return  RestBean.success(petService.getPet(id));
     }
 
     @GetMapping
     @Operation(summary = "获取所有宠物")
-    public List<Pet> getAllPets() {
-        return petService.getAllPets();
+    public RestBean<List<Pet>> getAllPets() {
+        return RestBean.success(petService.getAllPets());
     }
 }
 

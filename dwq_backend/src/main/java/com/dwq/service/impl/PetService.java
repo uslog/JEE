@@ -20,12 +20,12 @@ public class PetService {
         return petMapper.insertPet(pet)!=0;
     }
 
-    public void deletePet(Integer id) {
-        petMapper.deletePetById(id);
+    public boolean deletePet(Integer id) {
+        return petMapper.deletePetById(id)!=0;
     }
 
-    public void updatePet(Pet pet) {
-        petMapper.updatePet(pet);
+    public boolean updatePet(Pet pet) {
+        return petMapper.updatePet(pet)!=0;
     }
 
     public Pet getPet(Integer id) {
